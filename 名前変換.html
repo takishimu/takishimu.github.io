@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名前変換 - 夢小説名前変換サイト</title>
+    <style>
+        body {
+            font-family: "メイリオ", sans-serif;
+            background: #f8f0f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .left-sidebar {
+            flex: 1;
+            min-width: 380px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .preview-area {
+            flex: 2;
+            min-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: #8b008b; margin-bottom: 10px; }
+        h2 { color: #8b008b; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+
+        .year-header, .month-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b008b;
+            padding: 12px 15px;
+            background: #f9e8f9;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .year-header:hover, .month-header:hover { background: #f0d0f0; }
+
+        .year-content, .month-content {
+            display: none;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .year-content.active, .month-content.active {
+            display: block;
+        }
+
+        .novel-item {
+            margin-bottom: 18px;
+        }
+        .novel-list a {
+            display: block;
+            padding: 12px 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 2px solid #8b008b;
+            background: #8b008b;
+            transition: all 0.3s ease;
+        }
+        /* ここを強化して確実にホバー効果を適用 */
+        .novel-list a:hover {
+            background: #c026d3 !important;
+            border-color: #c026d3 !important;
+            transform: translateX(6px);
+            box-shadow: 0 6px 12px rgba(192, 38, 211, 0.5);
+        }
+        .novel-list a.active {
+            background: #6b006b;
+            border-color: #6b006b;
+        }
+
+        .synopsis-preview {
+            font-size: 14px;
+            color: #555;
+            padding: 0 12px 8px 12px;
+            line-height: 1.5;
+            border-left: 4px solid #d8a8d8;
+        }
+
+        label { display: block; margin: 12px 0 5px; font-weight: bold; }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #8b008b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #a020f0; }
+
+        .novel {
+            white-space: pre-wrap;
+            font-size: 16px;
+            background: #fffaf0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 400px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <h1>名前変換</h1>
+    <p style="text-align:center;">小説のタイトルをクリックして名前を変換できます</p>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>📅 年別一覧</h2>
+            
+            <div class="year-header" onclick="toggleYear('2023')">2023年 <span id="arrow2023">▼</span></div>
+            <div class="year-content" id="year2023Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2024')">2024年 <span id="arrow2024">▼</span></div>
+            <div class="year-content" id="year2024Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow2025">▼</span></div>
+            <div class="year-content" id="year2025Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2026')">2026年 <span id="arrow2026">▼</span></div>
+            <div class="year-content" id="year2026Content"></div>
+
+            <h2 style="margin-top:30px;">👤 名前入力</h2>
+            <label>女主人公・名前</label>
+            <input type="text" id="name1" placeholder="例: 名前" value="名前">
+
+            <label>女主人公・苗字</label>
+            <input type="text" id="name2" placeholder="例: 苗字" value="苗字">
+
+            <label>男主人公・名前</label>
+            <input type="text" id="name3" placeholder="例: ナマエ" value="ナマエ">
+
+            <label>男主人公・苗字</label>
+            <input type="text" id="name4" placeholder="例: ミョウジ" value="ミョウジ">
+            
+            <label>（3Pの時に使用）二人目の男主人公・名前</label>
+            <input type="text" id="name5" placeholder="例: name" value="name">
+
+            <label>（3Pの時に使用）二人目の男主人公・苗字</label>
+            <input type="text" id="name6" placeholder="例: family" value="family">
+
+            <button onclick="convertNovel()">変換して表示</button>
+            <button onclick="clearAll()" style="background:#555; margin-left:10px;">クリア</button>
+        </div>
+
+        <div class="preview-area">
+            <h2 id="currentTitle">変換後小説プレビュー</h2>
+            <div id="result" class="novel">
+                小説のタイトルをクリックすると、ここに本文が表示されます。
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← ホームページに戻る</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- パスワード画面 -->
+    <div id="passwordScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 380px; width: 90%;">
+            <h2 id="passwordTitle">この小説を表示するには<br>パスワードを入力してください</h2>
+            <input type="password" id="passwordInput" placeholder="パスワード" style="width:100%; padding:12px; margin:15px 0; font-size:18px;">
+            <button onclick="checkPassword()" style="width:100%; padding:12px;">表示する</button>
+            <div id="passwordError" style="color:red; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let novels = [
+            {
+                id: 1,
+                year: "2023",
+                month: "04",
+                title: "快楽堕ちメス小説（淫魔性教育編）",
+                template: `〜登場人物〜
+
+《女主人公》
+上級淫魔の女の子。
+《男主人公》に指名されたため、彼の性教育係になった。
+
+《男主人公》
+次期淫魔王になる予定の男。
+《女主人公》に心底惚れており、性教育係は彼女がいいと名指しした。
+
+（ここに実際の小説全文を貼り付けてください）`,
+                synopsis: "上級淫魔のアリサが、次期淫魔王候補の童貞ヘンリーの性教育係に任命される。優位に立つつもりだったアリサが、予想外の快楽に翻弄されていく濃厚R18ストーリー。",
+                password: "1234"
+            },
+            {
+                id: 2,
+                year: "2023",
+                month: "11",
+                title: "魔王さまに嫁いだ純潔聖女姫が全身を鬼畜開発されてマゾイキ連発するような快楽堕ちメス妃になった話♡　～前編～",
+                template: `ここにこの小説の全文を貼り付けてください`,
+                synopsis: "純潔の聖女姫が魔王に嫁ぎ、鬼畜調教によって快楽堕ちしていく前編。",
+                password: "r18"
+            },
+            {
+                id: 3,
+                year: "2024",
+                month: "11",
+                title: "魔王さまに嫁いだ純潔聖女姫が全身を鬼畜開発されてマゾイキ連発するような快楽堕ちメス妃になった話♡　～前編～",
+                template: `ここにこの小説の全文を貼り付けてください`,
+                synopsis: "純潔の聖女姫が魔王に嫁ぎ、鬼畜調教によって快楽堕ちしていく前編。",
+                password: "r18"
+            }
+        ];
+
+        let currentNovelIndex = 0;
+        let pendingNovelIndex = null;
+
+        const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+        function renderYearList(year) {
+            const container = document.getElementById('year' + year + 'Content');
+            container.innerHTML = '';
+
+            for (let m = 1; m <= 12; m++) {
+                const monthStr = m.toString().padStart(2, '0');
+                const monthNovels = novels.filter(n => n.year === year && n.month === monthStr);
+
+                if (monthNovels.length === 0) continue;
+
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.innerHTML = `${monthNames[m-1]} <span id="arrow${year}${monthStr}">▼</span>`;
+                monthHeader.onclick = () => toggleMonth(year, monthStr);
+                container.appendChild(monthHeader);
+
+                const monthContent = document.createElement('div');
+                monthContent.className = 'month-content';
+                monthContent.id = `month${year}${monthStr}Content`;
+
+                const novelList = document.createElement('div');
+                novelList.className = 'novel-list';
+
+                monthNovels.forEach(novel => {
+                    const idx = novels.findIndex(n => n.id === novel.id);
+                    
+                    const item = document.createElement('div');
+                    item.className = 'novel-item';
+
+                    const link = document.createElement('a');
+                    link.href = "#";
+                    link.textContent = novel.title;
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        showPasswordForNovel(idx);
+                    };
+                    if (idx === currentNovelIndex) link.classList.add('active');
+
+                    const synopsis = document.createElement('div');
+                    synopsis.className = 'synopsis-preview';
+                    synopsis.textContent = novel.synopsis || 'あらすじは準備中です。';
+
+                    item.appendChild(link);
+                    item.appendChild(synopsis);
+                    novelList.appendChild(item);
+                });
+
+                monthContent.appendChild(novelList);
+                container.appendChild(monthContent);
+            }
+        }
+
+        function toggleYear(year) {
+            const content = document.getElementById('year' + year + 'Content');
+            const arrow = document.getElementById('arrow' + year);
+            if (content) {
+                content.classList.toggle('active');
+                arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        function toggleMonth(year, month) {
+            const content = document.getElementById(`month${year}${month}Content`);
+            const arrow = document.getElementById(`arrow${year}${month}`);
+            if (content) {
+                content.classList.toggle('active');
+                arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        function showPasswordForNovel(index) {
+            pendingNovelIndex = index;
+            const novel = novels[index];
+            
+            document.getElementById('passwordTitle').innerHTML = 
+                `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
+            
+            document.getElementById('passwordScreen').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').textContent = '';
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const novel = novels[pendingNovelIndex];
+
+            if (input === novel.password) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                currentNovelIndex = pendingNovelIndex;
+                loadSelectedNovel();
+            } else {
+                document.getElementById('passwordError').textContent = "パスワードが違います";
+            }
+        }
+
+        function loadSelectedNovel() {
+            const novel = novels[currentNovelIndex];
+            document.getElementById('currentTitle').innerHTML = 
+                `変換後小説プレビュー <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
+
+            let result = novel.template
+                .replace(/《女主人公》/g, (document.getElementById('name1').value.trim() || '【女主人公・名前】') + 
+                                         (document.getElementById('name2').value.trim() || '【女主人公・苗字】'))
+                .replace(/《男主人公》/g, (document.getElementById('name3').value.trim() || '【男主人公・名前】') + 
+                                         (document.getElementById('name4').value.trim() || '【男主人公・苗字】'))
+                .replace(/《二人目の男主人公》/g, (document.getElementById('name5').value.trim() || '【二人目の男主人公・名前】') + 
+                                                  (document.getElementById('name6').value.trim() || '【二人目の男主人公・苗字】'));
+
+            document.getElementById('result').innerHTML = result.replace(/\n/g, '<br>');
+        }
+
+        function convertNovel() {
+            if (currentNovelIndex !== undefined) loadSelectedNovel();
+        }
+
+        function clearAll() {
+            document.getElementById('name1').value = '';
+            document.getElementById('name2').value = '';
+            document.getElementById('name3').value = '';
+            document.getElementById('name4').value = '';
+            document.getElementById('name5').value = '';
+            document.getElementById('name6').value = '';
+            document.getElementById('result').innerHTML = '名前を入力して「変換して表示」を押してください。';
+        }
+
+        window.onload = function() {
+            ['2023','2024','2025','2026'].forEach(year => renderYearList(year));
+            
+            // すべての年を閉じた状態で開始
+            document.getElementById('year2023Content').classList.remove('active');
+            document.getElementById('year2024Content').classList.remove('active');
+            document.getElementById('year2025Content').classList.remove('active');
+            document.getElementById('year2026Content').classList.remove('active');
+
+            document.getElementById('arrow2023').textContent = '▼';
+            document.getElementById('arrow2024').textContent = '▼';
+            document.getElementById('arrow2025').textContent = '▼';
+            document.getElementById('arrow2026').textContent = '▼';
+        };
+    </script>
+</body>
+</html>
