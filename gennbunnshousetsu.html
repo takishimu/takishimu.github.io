@@ -502,9 +502,9 @@
                     };
                     if (idx === currentNovelIndex) link.classList.add('active');
 
-                    const synopsis = document.createElement('div');
-                    synopsis.className = 'synopsis-preview';
-                    synopsis.textContent = novel.synopsis || 'あらすじは準備中です。';
+                   const synopsis = document.createElement('div');
+synopsis.className = 'synopsis-preview';
+synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').replace(/\n/g, '<br>');
 
                     item.appendChild(link);
                     item.appendChild(synopsis);
