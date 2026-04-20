@@ -1,3 +1,468 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>名前変換 - 夢小説名前変換サイト</title>
+    <style>
+        body {
+            font-family: "メイリオ", sans-serif;
+            background: #f8f0f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .left-sidebar {
+            flex: 1;
+            min-width: 380px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .preview-area {
+            flex: 2;
+            min-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: #8b008b; margin-bottom: 10px; }
+        h2 { color: #8b008b; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+
+        .year-header, .month-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b008b;
+            padding: 12px 15px;
+            background: #f9e8f9;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .year-header:hover, .month-header:hover { background: #f0d0f0; }
+
+        .year-content, .month-content {
+            display: none;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .year-content.active, .month-content.active {
+            display: block;
+        }
+
+        .novel-item {
+            margin-bottom: 18px;
+        }
+        .novel-list a {
+            display: block;
+            padding: 12px 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 2px solid #8b008b;
+            background: #8b008b;
+            transition: all 0.3s ease;
+        }
+        .novel-list a:hover {
+            background: #c026d3 !important;
+            border-color: #c026d3 !important;
+            transform: translateX(6px);
+            box-shadow: 0 6px 12px rgba(192, 38, 211, 0.5);
+        }
+        .novel-list a.active {
+            background: #6b006b;
+            border-color: #6b006b;
+        }
+
+        .synopsis-preview {
+            font-size: 14px;
+            color: #555;
+            padding: 0 12px 8px 12px;
+            line-height: 1.5;
+            border-left: 4px solid #d8a8d8;
+        }
+
+        label { display: block; margin: 12px 0 5px; font-weight: bold; }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #8b008b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #a020f0; }
+
+        .novel {
+            white-space: pre-wrap;
+            font-size: 16px;
+            background: #fffaf0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-height: 400px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <h1>名前変換</h1>
+    <p style="text-align:center;">小説のタイトルをクリックして名前を変換できます</p>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>📅 年別一覧</h2>
+            
+            <div class="year-header" onclick="toggleYear('2023')">2023年 <span id="arrow2023">▼</span></div>
+            <div class="year-content" id="year2023Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2024')">2024年 <span id="arrow2024">▼</span></div>
+            <div class="year-content" id="year2024Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow2025">▼</span></div>
+            <div class="year-content" id="year2025Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2026')">2026年 <span id="arrow2026">▼</span></div>
+            <div class="year-content" id="year2026Content"></div>
+
+            <h2 style="margin-top:30px;">👤 名前入力</h2>
+            <label>女主人公・名前</label>
+            <input type="text" id="name1" placeholder="例: 名前" value="名前">
+
+            <label>女主人公・苗字</label>
+            <input type="text" id="name2" placeholder="例: 苗字" value="苗字">
+
+            <label>男主人公・名前</label>
+            <input type="text" id="name3" placeholder="例: ナマエ" value="ナマエ">
+
+            <label>男主人公・苗字</label>
+            <input type="text" id="name4" placeholder="例: ミョウジ" value="ミョウジ">
+            
+            <label>（3Pの時に使用）二人目の男主人公・名前</label>
+            <input type="text" id="name5" placeholder="例: name" value="name">
+
+            <label>（3Pの時に使用）二人目の男主人公・苗字</label>
+            <input type="text" id="name6" placeholder="例: family" value="family">
+
+            <button onclick="convertNovel()">変換して表示</button>
+            <button onclick="clearAll()" style="background:#555; margin-left:10px;">クリア</button>
+        </div>
+
+        <div class="preview-area">
+            <h2 id="currentTitle">変換後小説プレビュー</h2>
+            <div id="result" class="novel">
+                小説のタイトルをクリックすると、ここに本文が表示されます。
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← ホームページに戻る</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- パスワード画面 -->
+    <div id="passwordScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 380px; width: 90%;">
+            <h2 id="passwordTitle">この小説を表示するには<br>パスワードを入力してください</h2>
+            <input type="password" id="passwordInput" placeholder="パスワード" style="width:100%; padding:12px; margin:15px 0; font-size:18px;">
+            <button onclick="checkPassword()" style="width:100%; padding:12px;">表示する</button>
+            <div id="passwordError" style="color:red; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <script>
+        let novels = [
+            {
+                id: 1,
+                year: "2023",
+                month: "02",
+                title: "未加工のメスを自分好みのメスに調教しよう♡　導入編",
+                template: `
+
+ようやくこの時がきた。
+俺はもうすぐ日付が変わる時間に薄暗い部屋の中で、ワクワクしながらスマホを眺めていた。
+そこには事前ダウンロードしていた【あなたにぴったりのメスを探そう！】のアプリが、あと数分で使用できるかというカウントダウンが映し出されている。
+
+この国のオスは二十歳になるとメスを一匹入手できる。
+オスは自分の性的志向とちんぽに相性が良さそうなメスを選び、性処理のパートナーとして家に迎えいれることで、晴れて一人前のオスとして生きていけるのだ。
+そのメスを入手し管理する方法が、今スマホで起動しているアプリだ。
+成人を迎える日付の前までは事前ダウンロードこそできるものの、国が運営しているだけあって制限が厳しく、どんなメスがいるかすら閲覧することすらできない。
+五年前に成人している兄や父親のメスを見ては心底羨ましく思っていたが、これでようやく自分だけのメスを持てると俺は興奮していた。
+
+
+
+もうメスを飼う準備は整っているので、日付が変わるのと同時にアプリを起動する。
+最初に本人確認・利用規約・メスにやってはいけない注意事項などを読みこんでサインをしたあと、理想のメスを探すために早速検索ページを開く。
+そこにはカテゴリーごとに様々なメスの写真が掲載されていた。
+大人気の即ハメからの即アクメOKの淫乱ハメ穴メスや、オスが動かなくても積極的に動いて射精を導いてくれる全自動搾精メス、ただ単にそこそこセックス慣れしているだけのノーマルメスなど様々な種類のメスがいる。
+一覧には顔だけしか写されてないが、タップすれば詳細も見れる。
+ぺージの下まで人気のメスたちを見てもちんぽが反応するような子がいなかったので、検索ボックスにあらかじめ考えておいた条件を設定した。
+
+未加工の処女でおっぱいが大きくて気が強い子。
+それが俺がずっと求めていた理想のメスだ。
+
+誰にも穢されてないメスを一から自分好みに調教したいという特殊な性癖を持っているので、そういう条件で探したが、検索数が少ない上に中々好みの顔の子が見つからない。
+
+「んー。やっぱり未加工のメスは少ないか……」
+
+そもそもメスに求めらていることは俺たちオスを気持ちよく射精させることなので、プロの調教師の手や機械のプログラムにより性的な奉仕ができるようにあらかじめ仕込まれていることが多い。
+アプリの最初に掲載されていたメスたちは、まさにオスがいつでもどこでも手軽にハメられる肉穴になれるように調教によって作り替えられた加工品だ。
+メスごときに時間を掛けるオスはあまりいないので、供給してくれる国の方でそういう手間を省いてくれているのだ。
+しかし、俺は誰の手垢もついてないメスを一から調教して自分専用の性奴隷を作り上げたいので、そういう加工が施されているメスではないのがいい。
+
+条件か顔のうちどれかは妥協しないとダメかと諦めの境地で最後のページを閲覧していれば、俺の目は一人のメスに吸い寄せられた。
+オスに対して媚びているような表情のメスが多いなか、そのメスは睨むようにこちらを見ている写真がサムネで、指先でタップすれば全身の写真と彼女の詳細な説明のページへ飛ぶ。
+年齢は俺と一緒の20歳で、髪色も目の色もピンク。おっぱいはGカップ。
+未加工の処女かつ気が強いという条件も合致している上に、乳首が中に引っ込んでいる陥没乳首タイプのメスだ。
+しかも、顔も滅茶苦茶俺好みの綺麗な顔をしている。
+この強気な顔を快楽に染めて泣いている表情を想像しただけでチンポがフル勃起した俺は、このメスを自分のパートナーにすることに決めた。
+
+他のメスには目もくれずに配達ページに進んで、一目惚れしたメスの発送を頼んだ。
+発送されるときのオプションは媚薬漬け状態や睡眠状態など様々なものがあるが、あえて全身がっちり拘束コースだけにチェックをいれた。
+安全のために意識を朦朧とさせるガスは吸わせるらしいが、到着したら数分で覚醒するらしい。
+予約完了メールと配達予定日時のメールを受け取った。
+メスの発送はなによりも優先されるので明日の昼頃には到着するらしい。
+写真のメスが俺の手によって淫らに蕩けて快楽に狂う様を妄想し、三回ヌいてから眠りについた。
+
+
+
+次の日。
+楽しみすぎて早く目が覚めた俺は、メスのために揃えていた道具を再確認する。
+どれもこれも小遣いと給料を貯めて揃えた思い出深いものだ。
+ようやくこれらを使って自分の好きなようにメスを調教できる。
+
+メスのための調教部屋に軽く掃除機をかけ終わったタイミングで、配達員がメスを運んできた。
+収納ケースの前面部分を開いて写真通りの顔と体つきであることを確認して間違いないと判断した俺は、受領のサインを書いて配達員を見送ってから、メスをベットの上に座らせた。
+発送のために意識を朦朧とさせるガスを吸っていた彼女は少しの間ぼんやりとし、それから意識が覚醒したようだ。
+キッと俺を睨みつけてくる。
+
+「……アンタが私を選んだモノ好き？」
+「そうだ。そして今日からお前は俺のメスだ」
+「へぇ。どんな調教師が私を選んだかと思ったら、ただの一般人じゃない。
+私を好きに犯せると勘違いしているようだけど、そんなことできないから。勘違いしないほうがいいわよ。
+まぁ、せいぜい私にハメられるように頑張ることね」
+
+縄で全身を拘束されて自由に動けない身でも強気なメスの様子に、俺はますます彼女を気に入った。
+できるものならやってみろと挑発されたので、俺は遠慮なくメスを触ることにした。
+
+まずはただでさえ大きいのに縄で強調されるように俺の方へ突き出されているおっぱいを優しく揉みしだく。
+大きすぎて手のひらから零れ落ちている。
+オスである自分にはない柔らかさに夢中になりそうだ。
+
+ふにゅんふにゅん♡♡ほにゅ♡ぽよん♡♡ぽよん♡♡ぽよよよよんっ♡♡
+
+「すごく柔らかいな」
+「フンッ。童貞臭い反応ね。
+私の中に入れるまで持たないんじゃないの」
+「ん？もともと今日は挿入する予定はないぞ。
+お前の感度を確かめて調教計画を立てるのだけで一日が終わるからな」
+「はぁ!?頭おかしんじゃないの!?
+普通はメスが届けばすぐにでもヤリたいもんでしょう!?」
+「ヤリたい気持ちはもちろんあるが、一番はお前の快楽に歪んだ顔が見たいんだ。
+そのために未加工処女のメスを選んだんだからな」
+「童貞にありがちなＡⅤを現実だと思っているタイプなのね。かわいそうに。
+言っておくけど、メスはそんな単純で簡単じゃないんだから」
+「そうか。肝に銘じておこう」
+
+おっぱいは基本的に脂肪の塊なので、揉んでいても性的快楽を感じる場所ではないということを俺は知っている。
+こうやって巨乳を揉みしだいていても俺は気持ちいいが、メスはただ単に触られているというぐらいの感覚しかないはずだ。
+しかし、何事にも例外はあり、脇の下のスペンス乳腺は別だ。
+そこはリンパや神経が集まっており、開発が進めば絶頂できるほど性感帯へと成長する。
+
+とはいえ、開発するようなするのはまだまだ先なので、脂肪の柔らかさだけ堪能してから、ぷっくり♡と盛り上がっている乳輪を指先でつつく。
+
+「っ!?」
+「どうした？」
+「別にっ。いきなり触られたから驚いただけよ」
+「ほー。そうなのか」
+
+俺は人差し指だけを使って乳輪を愛撫する。
+おっぱいが大きい分、盛り上がっている乳輪部分も大きい。
+くるくる♡と乳首が収まっている穴の周りを撫でたり、おっぱいの境目から境目まで一直線に指先を滑らせ、また穴の近くに戻ってぷにぷに♡とつつく。
+
+メスの表情や息遣いをつぶさに観察している俺は、乳首に近いほど感度がイイという結論を頭の中で出した。
+その証拠に管理アプリはメスが性的快楽を淡く感じている時のバイタルが表示されている。
+乳首の穴の付近をわざと爪先で引っ搔けば、メスは一瞬息を詰まらせる。
+痛みを感じるほど強くしてないので、快楽を感じていると考えるのが自然だ。
+
+つんつん♡くるくるくる♡ぷに♡カリカリ♡♡カリカリ♡♡
+
+「ま、まだ触るの？もう飽きてきたんだけどっ」
+「乳輪はもうおしまいだ。陥没乳首を触るぞ」
+
+そう言って俺はズプッ♡と人差し指を乳輪の中に埋めた。
+そのまま生暖かい脂肪の中を指先で探りながら進めば、こりっ♡と硬いものにあたる。
+メスは体を跳ねさせた。
+
+「んっ！」
+「いつも隠されているとこだから刺激は弱いらしいな」
+「そんなわけないでしょう。自分で触らないから変な感じがするだけよ！」
+「陥没乳首は感度が高い傾向があるというのは本当だったんだな。
+乳首の大きさも知っておきたいから、吸引機で吸い出すぞ」
+
+強がっているメスの言葉は聞き流して、ローションの口を指の代わりに乳首穴に咥えさせて中に注ぐ。
+ぶちゅちゅちゅちゅり♡、と垂れるほど入れてから抜いて、テカって卑猥になった乳輪ごと吸引機を装着する。
+このメスを選ぶ前は普通の乳首の形をしたメスを調教するつもりだったので、乳首調教が始まる前に陥没乳首用の道具を買い足す必要がありそうだ。
+
+ポンプによってシリンダーの中が真空になっていき、乳輪が充血して伸びる。
+これ以上の真空は酷い苦痛を伴ってしまうと思う一歩手前で、ブルンッ♡と乳首が吸いだされた。
+すぐに空気を入れて乳首を開放する。
+
+「ひぎゅっ!?」
+「おお。出た出た。４センチか。普通のメスよりも少し大きいってところだな。
+だが、もっと大きい方が俺の好みだ。これからの調教に期待だな」
+
+大きさを測って現在の大きさをアプリに登録しておく。
+このアプリはメスの今の状態を教えてくれるだけでなく、こういう使い方もできるのだ。
+もう片方の乳首も吸い出してから胸部全体の写真も撮って保存しておく。
+今夜のオカズにさせてもらうために、顔も含めて様々な角度で何枚か写真を撮っておいた。
+
+「アンタの好みなんて知らないわよ！これ以上痛いことをしたら、ただじゃおかないんだから！」
+「分かっている。バイタルが反応しても困るしな」
+
+メスには一匹一匹マイクロチップが埋め込まれていて、アプリの初回起動時にサインした禁止事項に触れるようなことを主人がしてないか国に管理されている。
+一定以上の恐怖や苦痛を感じた場合、アプリを通して警告があり、それを無視し続けると捕まるのだ。
+メスはオスに支配されて服従し気持ちよく精液を吐き出させるための性奴隷ではあるが、その辺の人権はきちんと守られている。
+
+「ふんっ。分かっているならいいわっ！二度目はないわよ」
+「俺はメスを調教したい欲はあるが痛めつけるのはシュミじゃない。
+ただ快楽に抗えなくして堕としたいだけだ」
+「悪趣味！」
+「誉め言葉だな。
+強引に吸ったせいで赤くなってしまったな。悪かった」
+
+謝罪の意も込めて、赤くなっている乳首を指の腹でよしよしと撫でる。
+ローションにまみれて摩擦がないため痛みはないだろう。
+むしろ性的快楽を感じているはずだ。
+
+メスは勝気な吊り目が少しだけ垂れ、頬をほんのりと桃色に染めている。
+未加工のメスが乳首で気持ちよくなれるとは思ってなかったが嬉しい誤算だ。
+
+「ふ、うっ……んんぅ♡」
+「気持ちいいなら声は我慢するな。思いっきり出した方が気持ちいいぞ」
+「べ、別に気持ちよくなんてないんだからっ！くすぐったいだけよ！」
+「痛みは治まったようだな。感度の確認もできたし乳首はここまでだ。
+次は下半身の確認をするぞ」
+
+座ったままだと触りずらいのでメスを押し倒して寝かせる。
+腰に枕をいれて高くすれば見やすくなった。
+足も縄にて拘束されているので腰を揺らすことぐらいしかメスはできない。
+ぱっかりとM字に開かれている股の間に俺は顔を埋めて、至近距離でメスのおまんこを視姦する。
+
+「そんなにまじまじと見ないでよ！」
+「何を言うんだ。一番大切なところだろう」
+
+流石に少し乳首を愛撫した程度では処女穴は濡れてない。
+俺は小陰唇に指先をおいて膣穴を左右に割開き、そこに処女膜が存在していることを確認する。
+確かに誰にも侵入されたことのない証拠である膜があり、俺は最高潮に機嫌がよくなった。
+
+破らないようにそっと穴のフチから指先を離し、皮を被って縮こまっているクリトリスに先ほどと同じローションを垂らす。
+ここは分かりやすいメスの弱点で、適当に弄っても愛液を垂れ流して連続アクメをするような箇所だ。
+調教のとっかかりとして使おうと思っている性感帯なので、俺はことさら細かくクリトリスを触診する。
+
+「大きさは５ミリか。乳首と比べると控えめな大きさだな」
+
+感度は、とローションまみれのクリトリスをくりくりと愛撫して確かめる。
+太ももの内側をぴくぴくと跳ねさせて甘い吐息を履いているので感じてはいそうだ。
+しかし、気持ちよく感じているであろう愛撫を続けても絶頂の兆しは未だない。
+というよりもメス自身が与えられている快楽に混乱しているように見受けられる。
+その様子を見て俺は一つの仮説を立てた。
+
+「処女なのはデータで知っているが、自分で慰めたりしたことはないのか？」
+「は、はぁ!?あるわけないでしょ、そんなの!!」
+「そうか。イったことがないのか。
+……なるほど。正真正銘の初物ってわけだな」
+
+何とも運がいいことにメスは自慰すらしたことがないらしい。
+初めての絶頂から仕込めると分かり、俺はニヤニヤと笑った。
+
+これは素晴らしい初体験にしてやらないとな。
+ただの手淫やローターなんかで味わえる絶頂じゃもったいない。
+その絶頂で俺が与える快楽がどれだけイイものであるか分かるような凄まじい快楽でなくては。
+
+「気持ち悪い笑顔を浮かべるんじゃないわよっ！」
+「ははははっ。本当にいいメスだ、お前は。
+確認は終わりだ。明日に備えてもうゆっくりするといい」
+「縄解いてよ！あと、お風呂に入りたい！」
+「この部屋の中にすべて備え付けているから好きにするといい」
+
+縄を解いて好きにさせてやる。
+せいぜい最後の自由時間を楽しめばいい。
+明日からはもう自分の足で歩けないようになるんだからな。
+
+しばらくしてメスは風呂から上がってきた。
+おまんこと乳輪が丸出しの下着しか身に纏えないのが恥ずかしいのかバスタオルを巻いている。
+風呂に入ってさっぱりしたお陰か先ほどよりは気分の良さそうなメスを再度ベットに押し倒し、巻かれていたバスタオルを剥いでクリトリスと尿道に痒みを誘発するローションを手早く塗り込む。
+そして、クリトリスは包皮ごとクリキャップで吸い上げ、尿道には栓のための短いブジ―を挿入して、最後にメスが外せないように貞操帯を着けた。
+
+「なっ!?今日はもう何もしないんじゃないの!?」
+「そんなことは言ってない。
+じゃあ、ゆっくり休んでくれ。明日からは本格的に調教するから体を休めないと持たないぞ」
+
+メスの上から退いて、今度こそに自由にしてやる。
+睨みつけられるがまったく気にせずに俺は自分の部屋に戻った。
+そして、明日からの調教の日々胸を高らせながら、メスのために用意しておいた調教計画を修正した。
+勿論、メスの写真を使って何度かヌキながらだ。
+
+ちんぽがすっきりするのと共に最高の計画が出来上がったので、俺は満足感を感じたまま眠りに入った。
+
+
+
+メス　(20歳)　バイタル：良好
+おっぱいのサイズ：Gカップ
+乳首のサイズ：４センチ
+乳首の感度：３０
+クリトリスのサイズ：５ミリ
+クリトリスの感度：６０
+
+※感度１００で愛撫を約３０分間受けてようやく絶頂できるレベル
+　なお、加工品の感度は性感帯にもよるが平均的に５００である
+
+
+`,
+                synopsis: `この国ではオスが20歳になると一匹のメスを配布します。
+自分の好みピッタリのメスを見つけてパートナにして気持ちいい射精ライフを送りましょう。
+そんな国の20歳になったばかりのオスがメスを選び、自分の理想とする淫乱なメスに調教していく話。
+
+今回は本番なしです。
+次回からがっつりと調教を始めます。`,
+                password: null
+            },
+               {
+                id: 2,                                      // ← 必ず次の番号にする（現在は4までなので次は5）
+                year: "2023",                               // ← 年を変更（例: 2025）
+                month: "02",                                // ← 月を2桁で（例: 04 = 4月）
+                title: "未加工のメスを自分好みのメスに調教しよう♡　クリトリス調教中",
+                template: `
+
 
 
 
@@ -374,3 +839,171 @@
 　なお、加工品の感度は平均的に１０００である
 
 
+`,
+                synopsis: `この国ではオスが20歳になると一匹のメスを配布します。
+自分の好みピッタリのメスを見つけてパートナにして気持ちいい射精ライフを送りましょう。
+そんな国の20歳になったばかりのオスがメスを選び、自分の理想とする淫乱なメスに調教していく話。
+    痒くて堪らないクリトリスや尿道をイク寸前まで責められまくってます。
+
+        有料小説内に含まれるプレイ内容一覧
+・尿道痒み責め♡
+・陰核脚押し潰し♡
+・膀胱開発♡`,
+                password: "y40fs692"
+              },
+
+
+        ];
+
+        let currentNovelIndex = 0;
+        let pendingNovelIndex = null;
+
+        const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+        function renderYearList(year) {
+            const container = document.getElementById('year' + year + 'Content');
+            container.innerHTML = '';
+
+            for (let m = 1; m <= 12; m++) {
+                const monthStr = m.toString().padStart(2, '0');
+                const monthNovels = novels.filter(n => n.year === year && n.month === monthStr);
+
+                if (monthNovels.length === 0) continue;
+
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.innerHTML = `${monthNames[m-1]} <span id="arrow${year}${monthStr}">▼</span>`;
+                monthHeader.onclick = () => toggleMonth(year, monthStr);
+                container.appendChild(monthHeader);
+
+                const monthContent = document.createElement('div');
+                monthContent.className = 'month-content';
+                monthContent.id = `month${year}${monthStr}Content`;
+
+                const novelList = document.createElement('div');
+                novelList.className = 'novel-list';
+
+                monthNovels.forEach(novel => {
+                    const idx = novels.findIndex(n => n.id === novel.id);
+                    
+                    const item = document.createElement('div');
+                    item.className = 'novel-item';
+
+                    const link = document.createElement('a');
+                    link.href = "#";
+                    link.textContent = novel.title;
+                    link.onclick = (e) => {
+                        e.preventDefault();
+                        showPasswordForNovel(idx);
+                    };
+                    if (idx === currentNovelIndex) link.classList.add('active');
+
+                    const synopsis = document.createElement('div');
+                    synopsis.className = 'synopsis-preview';
+                    synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').replace(/\n/g, '<br>');
+
+                    item.appendChild(link);
+                    item.appendChild(synopsis);
+                    novelList.appendChild(item);
+                });
+
+                monthContent.appendChild(novelList);
+                container.appendChild(monthContent);
+            }
+        }
+
+        function toggleYear(year) {
+            const content = document.getElementById('year' + year + 'Content');
+            const arrow = document.getElementById('arrow' + year);
+            if (content) {
+                content.classList.toggle('active');
+                arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        function toggleMonth(year, month) {
+            const content = document.getElementById(`month${year}${month}Content`);
+            const arrow = document.getElementById(`arrow${year}${month}`);
+            if (content) {
+                content.classList.toggle('active');
+                arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        function showPasswordForNovel(index) {
+            const novel = novels[index];
+
+            if (novel.id === 1 || novel.password === null || novel.password === "") {
+                currentNovelIndex = index;
+                loadSelectedNovel();
+                return;
+            }
+
+            pendingNovelIndex = index;
+            document.getElementById('passwordTitle').innerHTML = 
+                `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
+            
+            document.getElementById('passwordScreen').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').textContent = '';
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const novel = novels[pendingNovelIndex];
+
+            if (input === novel.password) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                currentNovelIndex = pendingNovelIndex;
+                loadSelectedNovel();
+            } else {
+                document.getElementById('passwordError').textContent = "パスワードが違います";
+            }
+        }
+
+              function loadSelectedNovel() {
+            const novel = novels[currentNovelIndex];
+            document.getElementById('currentTitle').innerHTML = 
+                `変換後小説プレビュー <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
+
+            let result = novel.template
+                .replace(/《name1》/g, (document.getElementById('name1').value.trim() || '【女主人公・名前】'))
+                .replace(/《name2》/g, (document.getElementById('name2').value.trim() || '【女主人公・苗字】'))
+                .replace(/《name3》/g, (document.getElementById('name3').value.trim() || '【男主人公・名前】'))
+                .replace(/《name4》/g, (document.getElementById('name4').value.trim() || '【男主人公・苗字】'))
+                .replace(/《name5》/g, (document.getElementById('name5').value.trim() || '【二人目の男主人公・名前】'))
+                .replace(/《name6》/g, (document.getElementById('name6').value.trim() || '【二人目の男主人公・苗字】'));
+
+            document.getElementById('result').innerHTML = result.replace(/\n/g, '<br>');
+        }
+
+        function convertNovel() {
+            if (currentNovelIndex !== undefined) loadSelectedNovel();
+        }
+
+        function clearAll() {
+            document.getElementById('name1').value = '';
+            document.getElementById('name2').value = '';
+            document.getElementById('name3').value = '';
+            document.getElementById('name4').value = '';
+            document.getElementById('name5').value = '';
+            document.getElementById('name6').value = '';
+            document.getElementById('result').innerHTML = '名前を入力して「変換して表示」を押してください。';
+        }
+
+        window.onload = function() {
+            ['2023','2024','2025','2026'].forEach(year => renderYearList(year));
+            
+            document.getElementById('year2023Content').classList.remove('active');
+            document.getElementById('year2024Content').classList.remove('active');
+            document.getElementById('year2025Content').classList.remove('active');
+            document.getElementById('year2026Content').classList.remove('active');
+
+            document.getElementById('arrow2023').textContent = '▼';
+            document.getElementById('arrow2024').textContent = '▼';
+            document.getElementById('arrow2025').textContent = '▼';
+            document.getElementById('arrow2026').textContent = '▼';
+        };
+    </script>
+</body>
+</html>
