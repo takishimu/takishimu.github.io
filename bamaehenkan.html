@@ -959,18 +959,18 @@ name1　(20歳)　バイタル：軽度の発情
             }
         }
 
-        function loadSelectedNovel() {
+              function loadSelectedNovel() {
             const novel = novels[currentNovelIndex];
             document.getElementById('currentTitle').innerHTML = 
                 `変換後小説プレビュー <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
 
             let result = novel.template
-                .replace(/《name1》/g,(document.getElementById('name1').value.trim() || '【女主人公・名前】') + 
-                .replace(/《name2》/g,(document.getElementById('name2').value.trim() || '【女主人公・苗字】'))
-                .replace(/《name3》/g,(document.getElementById('name3').value.trim() || '【男主人公・名前】') + 
-                .replace(/《name4》/g,(document.getElementById('name4').value.trim() || '【男主人公・苗字】'))
-                .replace(/《name5》/g,(document.getElementById('name5').value.trim() || '【二人目の男主人公・名前】') + 
-                .replace(/《name6》/g,(document.getElementById('name6').value.trim() || '【二人目の男主人公・苗字】'));
+                .replace(/《name1》/g, (document.getElementById('name1').value.trim() || '【女主人公・名前】'))
+                .replace(/《name2》/g, (document.getElementById('name2').value.trim() || '【女主人公・苗字】'))
+                .replace(/《name3》/g, (document.getElementById('name3').value.trim() || '【男主人公・名前】'))
+                .replace(/《name4》/g, (document.getElementById('name4').value.trim() || '【男主人公・苗字】'))
+                .replace(/《name5》/g, (document.getElementById('name5').value.trim() || '【二人目の男主人公・名前】'))
+                .replace(/《name6》/g, (document.getElementById('name6').value.trim() || '【二人目の男主人公・苗字】'));
 
             document.getElementById('result').innerHTML = result.replace(/\n/g, '<br>');
         }
