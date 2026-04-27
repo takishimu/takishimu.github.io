@@ -85,6 +85,7 @@
     <script src="2023_novels-data.js"></script>
 
     <script>
+        // novels-data.js からデータを取得（let を var に変更して重複を回避）
         let novels = window.novelsData || [];
 
         function renderYearList(year) {
@@ -188,6 +189,7 @@
             }
         }
 
+        // 初期化
         window.onload = function() {
             ['2023','2024','2025','2026'].forEach(year => renderYearList(year));
             document.querySelectorAll('.year-content').forEach(el => el.classList.remove('active'));
