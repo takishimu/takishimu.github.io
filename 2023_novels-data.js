@@ -1,4 +1,4 @@
-// novels-data.js
+// 2023_novels-data.js
 // このファイルにすべての小説データを入れてください
 
 const novels = [
