@@ -81,11 +81,11 @@
         </div>
     </div>
 
-    <!-- 小説データ読み込み -->
-    <script src=""2023_novels-data.js"></script>
+    <!-- 小説データ読み込み（ファイル名をあなたのものに合わせています） -->
+    <script src="2023_novels-data.js"></script>
 
     <script>
-        let novels = 2023_novels-data.js || [];
+        let novels = window.novelsData || [];
 
         function renderYearList(year) {
             const container = document.getElementById('year' + year + 'Content');
@@ -99,13 +99,13 @@
 
                 const monthHeader = document.createElement('div');
                 monthHeader.className = 'month-header';
-                monthHeader.innerHTML = `${m}月 <span id="arrow${year}${monthStr}">▼</span>`;
+                monthHeader.innerHTML = m + '月 <span id="arrow' + year + monthStr + '">▼</span>';
                 monthHeader.onclick = () => toggleMonth(year, monthStr);
                 container.appendChild(monthHeader);
 
                 const monthContent = document.createElement('div');
                 monthContent.className = 'month-content';
-                monthContent.id = `month${year}${monthStr}Content`;
+                monthContent.id = 'month' + year + monthStr + 'Content';
 
                 const novelList = document.createElement('div');
                 novelList.className = 'novel-list';
@@ -146,8 +146,8 @@
         }
 
         function toggleMonth(year, month) {
-            const content = document.getElementById(`month${year}${month}Content`);
-            const arrow = document.getElementById(`arrow${year}${month}`);
+            const content = document.getElementById('month' + year + month + 'Content');
+            const arrow = document.getElementById('arrow' + year + month);
             if (content) {
                 content.classList.toggle('active');
                 if (arrow) arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
