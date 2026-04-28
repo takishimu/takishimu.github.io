@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文</title>
+    <style>
+        body {
+            font-family: "メイリオ", sans-serif;
+            background: #f8f0f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .left-sidebar {
+            flex: 1;
+            min-width: 380px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .preview-area {
+            flex: 2;
+            min-width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 { text-align: center; color: #8b008b; margin-bottom: 15px; }
+        h2 { color: #8b008b; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+
+        .year-header, .month-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b008b;
+            padding: 12px 15px;
+            background: #f9e8f9;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .year-header:hover, .month-header:hover { background: #f0d0f0; }
+
+        .year-content, .month-content {
+            display: none;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .year-content.active, .month-content.active {
+            display: block;
+        }
+
+        .novel-list a {
+            display: block;
+            padding: 14px 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            background: #8b008b;
+            border: 2px solid #8b008b;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        .novel-list a:hover {
+            background: #c026d3;
+            border-color: #c026d3;
+            transform: translateX(6px);
+        }
+    </style>
+</head>
+<body>
+    <h1>夢小説閲覧サイト</h1>
+    <p style="text-align:center;">小説のタイトルをクリックすると本文が表示されます</p>
+
+    <div class="container">
+        <!-- 左側：年別一覧 -->
+        <div class="left-sidebar">
+            <h2>📅 年別一覧</h2>
+            
+            <div class="year-header" onclick="toggleYear('2023')">2023年 <span id="arrow2023">▼</span></div>
+            <div class="year-content" id="year2023Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2024')">2024年 <span id="arrow2024">▼</span></div>
+            <div class="year-content" id="year2024Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow2025">▼</span></div>
+            <div class="year-content" id="year2025Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2026')">2026年 <span id="arrow2026">▼</span></div>
+            <div class="year-content" id="year2026Content"></div>
+        </div>
+
+        <!-- 右側：案内エリア -->
+        <div class="preview-area">
+            <h2>小説本文</h2>
+            <div class="novel" style="text-align:center; padding:60px 30px; color:#666;">
+                左側のリストから小説タイトルをクリックしてください。<br><br>
+                本文はそれぞれの専用ページで表示されます。
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← ホームページに戻る</a>
+            </div>
+        </div>
+    </div>
+<script src="2023_novels-data.js"></script>
+<script>
+    let novels = window.novelsData || [];
+
+    <script>
+        // 2023_name.html
+        let novelLinks = [
+           
+        ];
+
+        function renderYearList(year) {
+            const container = document.getElementById('year' + year + 'Content');
+            container.innerHTML = '';
+
+            for (let m = 1; m <= 12; m++) {
+                const monthStr = m.toString().padStart(2, '0');
+                const monthNovels = novelLinks.filter(n => n.year === year && n.month === monthStr);
+
+                if (monthNovels.length === 0) continue;
+
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.innerHTML = `${m}月 <span id="arrow${year}${monthStr}">▼</span>`;
+                monthHeader.onclick = () => toggleMonth(year, monthStr);
+                container.appendChild(monthHeader);
+
+                const monthContent = document.createElement('div');
+                monthContent.className = 'month-content';
+                monthContent.id = `month${year}${monthStr}Content`;
+
+                const novelList = document.createElement('div');
+                novelList.className = 'novel-list';
+
+                monthNovels.forEach(novel => {
+                    const link = document.createElement('a');
+                    link.href = novel.url;           // リンクを設定
+                    link.textContent = novel.title;
+                    novelList.appendChild(link);
+                });
+
+                monthContent.appendChild(novelList);
+                container.appendChild(monthContent);
+            }
+        }
+
+        function toggleYear(year) {
+            const content = document.getElementById('year' + year + 'Content');
+            const arrow = document.getElementById('arrow' + year);
+            if (content) {
+                content.classList.toggle('active');
+                if (arrow) arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        function toggleMonth(year, month) {
+            const content = document.getElementById(`month${year}${month}Content`);
+            const arrow = document.getElementById(`arrow${year}${month}`);
+            if (content) {
+                content.classList.toggle('active');
+                if (arrow) arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        // 初期化
+        window.onload = function() {
+            ['2023','2024','2025','2026'].forEach(year => renderYearList(year));
+            
+            // 最初はすべて閉じた状態
+            document.querySelectorAll('.year-content').forEach(el => el.classList.remove('active'));
+            ['2023','2024','2025','2026'].forEach(y => {
+                const arrow = document.getElementById('arrow' + y);
+                if (arrow) arrow.textContent = '▼';
+            });
+        };
+    </script>
+</body>
+</html>
