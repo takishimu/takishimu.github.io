@@ -125,18 +125,10 @@
         <!-- 左側：年代一覧のみ -->
         <div class="left-sidebar">
             <h2>📅 年別一覧</h2>
-            
-            <div class="year-header" onclick="toggleYear('2023')">2023年 <span id="arrow2023">▼</span></div>
-            <div class="year-content" id="year2023Content"></div>
 
             <div class="year-header" onclick="toggleYear('2024')">2024年 <span id="arrow2024">▼</span></div>
             <div class="year-content" id="year2024Content"></div>
 
-            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow2025">▼</span></div>
-            <div class="year-content" id="year2025Content"></div>
-
-            <div class="year-header" onclick="toggleYear('2026')">2026年 <span id="arrow2026">▼</span></div>
-            <div class="year-content" id="year2026Content"></div>
         </div>
 
         <!-- 右側：小説本文表示エリア -->
@@ -9297,15 +9289,9 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             ['2023','2024','2025','2026'].forEach(year => renderYearList(year));
             
             // すべての年を閉じた状態で開始
-            document.getElementById('year2023Content').classList.remove('active');
             document.getElementById('year2024Content').classList.remove('active');
-            document.getElementById('year2025Content').classList.remove('active');
-            document.getElementById('year2026Content').classList.remove('active');
 
-            document.getElementById('arrow2023').textContent = '▼';
             document.getElementById('arrow2024').textContent = '▼';
-            document.getElementById('arrow2025').textContent = '▼';
-            document.getElementById('arrow2026').textContent = '▼';
         };
     </script>
 </body>
