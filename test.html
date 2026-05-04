@@ -50,15 +50,18 @@
         <div class="left-sidebar">
             <h2>📅 年別一覧</h2>
             
-            <div class="year-header" onclick="toggleYear('2023')">2023年 <span id="arrow_2023">▼</span></div>
-            <div class="year-content" id="year_2023"></div>
+            <!-- 2023〜2025年：別ページへのリンク -->
+            <div class="year-header">
+                <a href="2023_bun.html" style="color:#8b008b; text-decoration:none; flex:1;">2023年</a>
+            </div>
+            <div class="year-header">
+                <a href="2024_bun.html" style="color:#8b008b; text-decoration:none; flex:1;">2024年</a>
+            </div>
+            <div class="year-header">
+                <a href="2025_bun.html" style="color:#8b008b; text-decoration:none; flex:1;">2025年</a>
+            </div>
 
-            <div class="year-header" onclick="toggleYear('2024')">2024年 <span id="arrow_2024">▼</span></div>
-            <div class="year-content" id="year_2024"></div>
-
-            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow_2025">▼</span></div>
-            <div class="year-content" id="year_2025"></div>
-
+            <!-- 2026年：同ページ内で表示 -->
             <div class="year-header" onclick="toggleYear('2026')">2026年 <span id="arrow_2026">▼</span></div>
             <div class="year-content" id="year_2026"></div>
         </div>
@@ -66,7 +69,7 @@
         <div class="preview-area">
             <h2 id="currentTitle">小説本文</h2>
             <div id="result" class="novel">
-                左側のタイトルをクリックすると、ここに本文が表示されます。
+                2026年の小説タイトルをクリックすると、ここに本文が表示されます。
             </div>
         </div>
     </div>
@@ -81,78 +84,54 @@
         </div>
     </div>
 
-    <!-- 小説データ読み込み -->
+    <!-- 2026年用の小説データ -->
     <script src="2023_novels-data.js"></script>
-    <script src="2024_novels-data.js"></script>
 
     <script>
-        // novels-data.js からデータを取得（let を var に変更して重複を回避）
         let novels = window.novelsData || [];
 
-        function renderYearList(year) {
-            const container = document.getElementById('year_' + year);
+        // 2026年の小説のみ同ページで表示
+        function renderYear2026() {
+            const container = document.getElementById('year_2026');
             container.innerHTML = '';
 
-            for (let m = 1; m <= 12; m++) {
-                const monthStr = m.toString().padStart(2, '0');
-                const monthNovels = novels.filter(n => n.year === year && n.month === monthStr);
+            const year2026Novels = novels.filter(n => n.year === "2026");
 
-                if (monthNovels.length === 0) continue;
+            const novelList = document.createElement('div');
+            novelList.className = 'novel-list';
 
-                const monthHeader = document.createElement('div');
-                monthHeader.className = 'month-header';
-                monthHeader.innerHTML = m + '月 <span id="arrow_' + year + '_' + monthStr + '">▼</span>';
-                monthHeader.onclick = () => toggleMonth(year, monthStr);
-                container.appendChild(monthHeader);
+            year2026Novels.forEach(novel => {
+                const item = document.createElement('div');
+                item.className = 'novel-item';
 
-                const monthContent = document.createElement('div');
-                monthContent.className = 'month-content';
-                monthContent.id = 'month_' + year + '_' + monthStr;
+                const link = document.createElement('a');
+                link.href = "#";
+                link.textContent = novel.title;
+                link.onclick = (e) => { 
+                    e.preventDefault(); 
+                    showNovel(novels.indexOf(novel)); 
+                };
 
-                const novelList = document.createElement('div');
-                novelList.className = 'novel-list';
+                const synopsisDiv = document.createElement('div');
+                synopsisDiv.className = 'synopsis-preview';
+                synopsisDiv.innerHTML = (novel.synopsis || 'あらすじは準備中です。').replace(/\n/g, '<br>');
 
-                monthNovels.forEach(novel => {
-                    const item = document.createElement('div');
-                    item.className = 'novel-item';
+                item.appendChild(link);
+                item.appendChild(synopsisDiv);
+                novelList.appendChild(item);
+            });
 
-                    const link = document.createElement('a');
-                    link.href = "#";
-                    link.textContent = novel.title;
-                    link.onclick = (e) => { 
-                        e.preventDefault(); 
-                        showNovel(novels.indexOf(novel)); 
-                    };
-
-                    const synopsisDiv = document.createElement('div');
-                    synopsisDiv.className = 'synopsis-preview';
-                    synopsisDiv.innerHTML = (novel.synopsis || 'あらすじは準備中です。').replace(/\n/g, '<br>');
-
-                    item.appendChild(link);
-                    item.appendChild(synopsisDiv);
-                    novelList.appendChild(item);
-                });
-
-                monthContent.appendChild(novelList);
-                container.appendChild(monthContent);
-            }
+            container.appendChild(novelList);
         }
 
         function toggleYear(year) {
-            const content = document.getElementById('year_' + year);
-            const arrow = document.getElementById('arrow_' + year);
-            if (content) {
-                content.classList.toggle('active');
-                if (arrow) arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
-            }
-        }
-
-        function toggleMonth(year, month) {
-            const content = document.getElementById('month_' + year + '_' + month);
-            const arrow = document.getElementById('arrow_' + year + '_' + month);
-            if (content) {
-                content.classList.toggle('active');
-                if (arrow) arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            if (year === '2026') {
+                const content = document.getElementById('year_2026');
+                const arrow = document.getElementById('arrow_2026');
+                if (content) {
+                    content.classList.toggle('active');
+                    arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+                }
             }
         }
 
@@ -192,12 +171,8 @@
 
         // 初期化
         window.onload = function() {
-            ['2023','2024','2025','2026'].forEach(year => renderYearList(year));
-            document.querySelectorAll('.year-content').forEach(el => el.classList.remove('active'));
-            ['2023','2024','2025','2026'].forEach(y => {
-                const arrow = document.getElementById('arrow_' + y);
-                if (arrow) arrow.textContent = '▼';
-            });
+            renderYear2026();
+            document.getElementById('arrow_2026').textContent = '▼';
         };
     </script>
 </body>
