@@ -52,13 +52,13 @@
             
             <!-- 2023〜2025年：別ページへのリンク -->
             <div class="year-header">
-                <a href="2023_bun.html" style="color:#8b008b; text-decoration:none; flex:1;">2023年</a>
+                <a href="2023_name.html" style="color:#8b008b; text-decoration:none; flex:1;">2023年</a>
             </div>
             <div class="year-header">
-                <a href="2024_bun.html" style="color:#8b008b; text-decoration:none; flex:1;">2024年</a>
+                <a href="2024_name.html" style="color:#8b008b; text-decoration:none; flex:1;">2024年</a>
             </div>
             <div class="year-header">
-                <a href="2025_bun.html" style="color:#8b008b; text-decoration:none; flex:1;">2025年</a>
+                <a href="2025_name.html" style="color:#8b008b; text-decoration:none; flex:1;">2025年</a>
             </div>
 
             <!-- 2026年：同ページ内で表示 -->
@@ -70,10 +70,6 @@
             <h2 id="currentTitle">小説本文</h2>
             <div id="result" class="novel">
                 2026年の小説タイトルをクリックすると、ここに本文が表示されます。
-            </div>
-
-            <div class="back-link">
-                <a href="index.html">← ホームページに戻る</a>
             </div>
         </div>
     </div>
@@ -88,9 +84,8 @@
         </div>
     </div>
 
-    <!-- 小説データ読み込み -->
+    <!-- 2026年用の小説データ -->
     <script src="2023_novels-data.js"></script>
-    <script src="2024_novels-data.js"></script>
 
     <script>
         let novels = window.novelsData || [];
@@ -101,8 +96,6 @@
             container.innerHTML = '';
 
             const year2026Novels = novels.filter(n => n.year === "2026");
-
-            if (year2026Novels.length === 0) return;
 
             const novelList = document.createElement('div');
             novelList.className = 'novel-list';
