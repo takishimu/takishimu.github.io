@@ -13888,7 +13888,7 @@ Gスポットアクメをした時には潮噴きをするように癖付けし�
 ・アナルにスライム詰めプレイ♡
 ・スライム排泄でハメメス穴化♡
 `,
-                password: "n7tptc2tu"                            // ← パスワードなしにしたい場合は null と書く
+                password: "n7tptc2t"                            // ← パスワードなしにしたい場合は null と書く
             },
 
   {
@@ -14273,7 +14273,7 @@ Gスポットをぐりぐり～っ♡ってされながら、ぬぽんっ♡♡�
 ・寝バックでガン突き♡
 ・発情よわよわメスボディ化でおちんぽデリバリー♡
 `,
-                password: "n7tptc2tu"                            // ← パスワードなしにしたい場合は null と書く
+                password: "n7tptc2t"                            // ← パスワードなしにしたい場合は null と書く
             },
 
      {
@@ -14692,7 +14692,7 @@ Gスポットをぐりぐり～っ♡ってされながら、ぬぽんっ♡♡�
 ・寝バックでイキ狂い♡
 ・アナルバイブで二穴同時責め♡
 `,
-                password: "n7tptc2tu"                            // ← パスワードなしにしたい場合は null と書く
+                password: "n7tptc2t"                            // ← パスワードなしにしたい場合は null と書く
             },
 
  {
@@ -15046,7 +15046,7 @@ Gスポットをぐりぐり～っ♡ってされながら、ぬぽんっ♡♡�
 ・乳腺ブジ―でほじほじ♡
 ・射乳快楽堕ちからのメスミルク牛化♡
 `,
-                password: "n7tptc2tu"                            // ← パスワードなしにしたい場合は null と書く
+                password: "n7tptc2t"                            // ← パスワードなしにしたい場合は null と書く
             },
 
  {
@@ -22137,10 +22137,12 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         }
 
         function showPasswordForNovel(index) {
-            const novel = novels[index];
+        
+           const novel = novels[index];
+            if (!novel) return;
 
-            // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.password === null || novel.password === "") {
+            // パスワードが null または空文字列の場合はパスワードなしで直接表示
+            if (novel.password === null || novel.password === "" || novel.password === undefined) {
                 currentNovelIndex = index;
                 loadSelectedNovel();
                 return;
@@ -22175,6 +22177,7 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
 
             document.getElementById('result').innerHTML = novel.template.replace(/\n/g, '<br>');
+             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // 初期化
