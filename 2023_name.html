@@ -21375,7 +21375,7 @@ VIP個室を取れるような優秀なオスさまの手マンなんて想像�
    
         ];
 
-        let currentNovelIndex = 0;
+       let currentNovelIndex = undefined;
         let pendingNovelIndex = null;
 
         const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
@@ -21498,8 +21498,16 @@ VIP個室を取れるような優秀なオスさまの手マンなんて想像�
                window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function convertNovel() {
-            if (currentNovelIndex !== undefined) loadSelectedNovel();
+       function convertNovel() {
+            // 小説が正しく選択されている場合のみ変換を実行
+            if (currentNovelIndex === undefined || 
+                currentNovelIndex === null || 
+                currentNovelIndex < 0 || 
+                currentNovelIndex >= novels.length) {
+                return; // まだ小説を選択していない場合は何もしない
+            }
+            
+            loadSelectedNovel();
         }
 
         function clearAll() {
