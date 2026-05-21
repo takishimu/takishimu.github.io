@@ -21457,6 +21457,7 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
 
             document.getElementById('result').innerHTML = novel.template.replace(/\n/g, '<br>');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // 初期化
