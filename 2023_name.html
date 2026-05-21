@@ -134,7 +134,7 @@
     </style>
 </head>
 <body>
-    <h1>名前変換</h1>
+    <h1>名前変換小説</h1>
     <p style="text-align:center;">小説のタイトルをクリックして名前を変換できます</p>
 
     <div class="container">
@@ -21495,6 +21495,7 @@ VIP個室を取れるような優秀なオスさまの手マンなんて想像�
                 .replace(/《name6》/g, (document.getElementById('name6').value.trim() || '【二人目の男主人公・苗字】'));
 
             document.getElementById('result').innerHTML = result.replace(/\n/g, '<br>');
+               window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function convertNovel() {
