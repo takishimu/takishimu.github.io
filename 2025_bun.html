@@ -8810,7 +8810,7 @@ Gスポットと陰核脚を責められて潮噴きアクメをさせられた�
             },
 
   {
-                id: 2,                                      // ← 必ず次の番号にする（現在は4までなので次は5）
+                id: 24,                                      // ← 必ず次の番号にする（現在は4までなので次は5）
                 year: "2025",                               // ← 年を変更（例: 2025）
                 month: "06",                                // ← 月を2桁で（例: 04 = 4月）
                 title: "アクメを我慢できたら解放してやると言われたが、調教済みよわよわメスボディで我慢できるはずがなかった♡",
@@ -10195,7 +10195,7 @@ Gスポットと陰核脚を責められて潮噴きアクメをさせられた�
             },
 
    {
-                id: 27,                                      // ← 必ず次の番号にする（現在は4までなので次は5）
+                id: 56,                                      // ← 必ず次の番号にする（現在は4までなので次は5）
                 year: "2025",                               // ← 年を変更（例: 2025）
                 month: "07",                                // ← 月を2桁で（例: 04 = 4月）
                 title: "アマゾネスの首長である私が男なんかにメロメロになるわけがない高をくくっていたが、極太長つよつよおちんぽにメス子宮を貫かれて陥落してしまった♡",
@@ -22204,10 +22204,12 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         }
 
         function showPasswordForNovel(index) {
-            const novel = novels[index];
+        
+           const novel = novels[index];
+            if (!novel) return;
 
-            // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.password === null || novel.password === "") {
+            // パスワードが null または空文字列の場合はパスワードなしで直接表示
+            if (novel.password === null || novel.password === "" || novel.password === undefined) {
                 currentNovelIndex = index;
                 loadSelectedNovel();
                 return;
@@ -22242,6 +22244,7 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
 
             document.getElementById('result').innerHTML = novel.template.replace(/\n/g, '<br>');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // 初期化
