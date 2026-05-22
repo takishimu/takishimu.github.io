@@ -11143,7 +11143,7 @@
         ];
 
 
-        let currentNovelIndex = undefined;
+         let currentNovelIndex = 0;
         let pendingNovelIndex = null;
 
         // monthNames定義（エラー回避用）
@@ -11229,7 +11229,7 @@
             }
         }
 
-        function showNovel(index) {
+               function showNovel(index) {
             const novel = novels[index];
             if (!novel) return;
 
@@ -11237,10 +11237,14 @@
 
             if (novel.password) {
                 showPasswordForNovel(index);
+                window.scrollTo({ top: 0, behavior: 'smooth' }); // 小説表示時に上部に戻る
                 return;
             }
 
             document.getElementById('result').innerHTML = (novel.template || '').replace(/\n/g, '<br>');
+            
+            // 小説を表示した際にページの一番上に戻る
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function showPasswordForNovel(index) {
