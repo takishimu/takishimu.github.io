@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫画連載</title>
+    <style>
+        body {
+            font-family: "メイリオ", sans-serif;
+            background: #f8f0f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .left-sidebar {
+            flex: 1;
+            min-width: 380px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .preview-area {
+            flex: 2;
+            min-width: 400px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        h1 { text-align: center; color: #8b008b; margin-bottom: 15px; }
+        h2 { color: #8b008b; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+
+        .year-header, .month-header {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b008b;
+            padding: 12px 15px;
+            background: #f9e8f9;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .year-header:hover, .month-header:hover { background: #f0d0f0; }
+
+        .year-content, .month-content {
+            display: none;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .year-content.active, .month-content.active {
+            display: block;
+        }
+
+        .manga-viewer {
+            text-align: center;
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 600px;
+            position: relative;
+        }
+
+        .manga-page {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #444;
+            border-radius: 4px;
+        }
+
+        .page-info {
+            color: #fff;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .nav-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .nav-buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #8b008b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 120px;
+        }
+        .nav-buttons button:hover {
+            background: #c026d3;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* パスワード画面 */
+        #passwordScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>漫画連載</h1>
+    <p style="text-align:center;">月を選択するとパスワード入力画面が表示されます</p>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>📅 年別一覧</h2>
+            
+            <div class="year-header" onclick="toggleYear('2023')">2023年 <span id="arrow2023">▼</span></div>
+            <div class="year-content" id="year2023Content"></div>
+            
+            <div class="year-header" onclick="toggleYear('2024')">2024年 <span id="arrow2024">▼</span></div>
+            <div class="year-content" id="year2024Content"></div>
+            
+            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow2025">▼</span></div>
+            <div class="year-content" id="year2025Content"></div>
+
+            <div class="year-header" onclick="toggleYear('2026')">2026年 <span id="arrow2026">▼</span></div>
+            <div class="year-content" id="year2026Content"></div>
+        </div>
+
+        <div class="preview-area">
+            <h2 id="currentTitle">漫画閲覧エリア</h2>
+            <div class="manga-viewer" id="mangaViewer">
+                <p style="color:#aaa; padding-top:200px;">月を選択して漫画を読んでください</p>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← ホームページに戻る</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- パスワード画面 -->
+    <div id="passwordScreen">
+        <div style="background: white; padding: 40px; border-radius: 12px; text-align: center; max-width: 400px; width: 90%;">
+            <h2 id="passwordTitle">この話を表示するには<br>パスワードを入力してください</h2>
+            <input type="password" id="passwordInput" placeholder="パスワード" 
+                   style="width:100%; padding:12px; margin:15px 0; font-size:18px;">
+            <button onclick="checkPassword()" 
+                    style="width:100%; padding:12px; font-size:16px;">表示する</button>
+            <div id="passwordError" style="color:red; margin-top:10px; min-height:24px;"></div>
+        </div>
+    </div>
+
+  <script>
+        let mangaList = [
+            {
+                id: 1,
+                year: "2023",
+                month: "02",
+                title: "2023年2月号",
+                password: "8nptp9et",
+                pages: [
+                    "Box.jpg",
+                    "Box0.jpg",
+                    "Box1.jpg",
+                    "Box2.jpg",
+                    "Box3.jpg",
+                    "Box4.jpg"
+                ]
+            },
+            {
+                id: 2,
+                year: "2023",
+                month: "03",
+                title: "2023年3月号",
+                password: "gwuhp265",
+                pages: [
+                    "Box5.jpg",
+                    "Box6.jpg",
+                    "Box7.jpg",
+                    "Box8.jpg"
+                ]
+            },
+             {
+                id: 3,
+                year: "2023",
+                month: "04",
+                title: "2023年4月号",
+                password: "o6qhi4bw",
+                pages: [
+                   "Box9.jpg",
+"Box10.jpg",
+"Box11.jpg",
+"Box12.jpg"
+                ]
+            },
+ {
+                id: 4,
+                year: "2023",
+                month: "05",
+                title: "2023年5月号",
+                password: "prlbp3er",
+                pages: [
+                  "Box13.jpg",
+"Box14.jpg",
+"Box15.jpg",
+"Box16.jpg",
+"Box17.jpg"
+
+                ]
+            },
+ {
+                id: 5,
+                year: "2023",
+                month: "06",
+                title: "2023年6月号",
+                password: "mmmn6aj1",
+                pages: [
+                  "Box18.jpg",
+"Box19.jpg",
+"Box20.jpg",
+"Box21.jpg",
+"Box22.jpg"
+                ]
+            },
+{
+                id: 6,
+                year: "2023",
+                month: "07",
+                title: "2023年7月号",
+                password: "nu817yy7",
+                pages: [
+                  "Box23.jpg",
+"Box24.jpg",
+"Box25.jpg",
+"Box26.jpg",
+"Box27.jpg"
+                ]
+            },
+            {
+                id: 7,
+                year: "2023",
+                month: "08",
+                title: "2023年8月号",
+                password: "tvx37ui3",
+                pages: [
+                 "Box28.jpg",
+"Box29.jpg",
+"Box30.jpg",
+"Box31.jpg",
+"Box32.jpg"
+                ]
+            },
+             {
+                id: 8,
+                year: "2023",
+                month: "09",
+                title: "2023年9月号",
+                password: "k7ryvwwx",
+                pages: [
+                 "Box33.jpg",
+"Box34.jpg",
+"Box35.jpg",
+"Box36.jpg",
+"Box37.jpg"
+                ]
+            },
+            {
+                id: 9,
+                year: "2023",
+                month: "10",
+                title: "2023年10月号",
+                password: "a2bjpdhr",
+                pages: [
+                "Box38.jpg",
+"Box39.jpg",
+"Box40.jpg",
+"Box41.jpg",
+"Box42.jpg"
+                ]
+            },
+             {
+                id: 10,
+                year: "2023",
+                month: "11",
+                title: "2023年11月号",
+                password: "wjoa8lxm",
+                pages: [
+               "Box43.jpg",
+"Box44.jpg",
+"Box45.jpg",
+"Box46.jpg",
+"Box47.jpg"
+                ]
+            },
+            {
+                id: 12,
+                year: "2023",
+                month: "12",
+                title: "2023年12月号",
+                password: "q0kiwnxu",
+                pages: [
+              "Box48.jpg",
+"Box49.jpg",
+"Box50.jpg",
+"Box51.jpg",
+"Box52.jpg",
+"ボックス　あとがき.jpg"
+                ]
+            },
+        ];
+
+        let synopsis2023 = `
+ボックス検査という大仕事を任された主人公。<BR>
+検査要項を満たして検査をしようとしたところ、ボックスの内容が『雑魚メス調教プログラム』だった。<BR>
+驚いている間にも媚薬を注入されたりして勝手に調教は進んでいってしまう。<BR>
+乳首・クリトリス・おまんこと順々に媚薬を追加されたり責められたりして雑魚メスに相応しいよわよわボディに作り変えられていく。
+        `;
+        let synopsis2024 = synopsis2023;
+        let synopsis2025 = synopsis2023;
+        let synopsis2026 = synopsis2023;
+
+        let currentManga = null;
+        let currentPage = 0;
+
+        const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+        function renderYearList(year) {
+            const container = document.getElementById('year' + year + 'Content');
+            container.innerHTML = '';
+
+            // あらすじ表示
+            let synopsis = '';
+            if (year === "2023") synopsis = synopsis2023;
+            else if (year === "2024") synopsis = synopsis2024;
+            else if (year === "2025") synopsis = synopsis2025;
+            else if (year === "2026") synopsis = synopsis2026;
+
+            if (synopsis) {
+                const synopsisDiv = document.createElement('div');
+                synopsisDiv.style.cssText = 'padding: 15px 12px; color:#555; background:#f9f0f9; border-radius:8px; margin-bottom:15px; border-left:5px solid #8b008b;';
+                synopsisDiv.innerHTML = synopsis;
+                container.appendChild(synopsisDiv);
+            }
+
+            // 月一覧
+            let startMonth = (year === "2023") ? 2 : 1;
+            for (let m = startMonth; m <= 12; m++) {
+                const monthStr = m.toString().padStart(2, '0');
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                monthHeader.innerHTML = `${monthNames[m-1]} <span>→</span>`;
+                monthHeader.onclick = () => showPasswordForYearMonth(year, monthStr);
+                container.appendChild(monthHeader);
+            }
+        }
+
+        function toggleYear(year) {
+            const content = document.getElementById('year' + year + 'Content');
+            const arrow = document.getElementById('arrow' + year);
+            if (content) {
+                content.classList.toggle('active');
+                arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
+            }
+        }
+
+        // ★★★ ここを修正 ★★★
+        function showPasswordForYearMonth(year, month) {
+            // mangaListから該当する漫画を探す
+            currentManga = mangaList.find(m => m.year === year && m.month === month);
+            
+            // まだ登録されていない月は仮データ
+            if (!currentManga) {
+                currentManga = {
+                    title: `${year}年${month}月号`,
+                    password: "8nptp9et",
+                    pages: []   // 後で画像を追加予定
+                };
+            }
+            openPasswordScreen();
+        }
+
+        function openPasswordScreen() {
+            document.getElementById('passwordTitle').innerHTML = 
+                `${currentManga.title}<br>を表示するには<br>パスワードを入力してください`;
+            document.getElementById('passwordScreen').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').textContent = '';
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === currentManga.password) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                loadManga();
+            } else {
+                document.getElementById('passwordError').textContent = "パスワードが違います";
+            }
+        }
+
+        function loadManga() {
+            currentPage = 0;
+            document.getElementById('currentTitle').textContent = currentManga.title;
+            showCurrentPage();
+        }
+        function showCurrentPage() {
+            const viewer = document.getElementById('mangaViewer');
+            if (!currentManga.pages || currentManga.pages.length === 0) {
+                viewer.innerHTML = `<p style="color:white; padding:100px 20px;">この月の漫画はまだ準備中です。</p>`;
+                return;
+            }
+
+            let buttons = '';
+
+            // 最終ページ以外なら「次ページ」を左側に
+            if (currentPage < currentManga.pages.length - 1) {
+                buttons += `<button onclick="nextPage()">次ページ</button>`;
+            } else {
+                // 最終ページは右寄せにするために空の要素を入れる
+                buttons += `<span style="flex:1;"></span>`;
+            }
+
+            // 1ページ目以外なら「前ページ」を右側に
+            if (currentPage > 0) {
+                buttons += `<button onclick="prevPage()">前ページ</button>`;
+            }
+
+            viewer.innerHTML = `
+                <img src="${currentManga.pages[currentPage]}" class="manga-page" alt="ページ ${currentPage + 1}">
+                <div class="page-info">${currentPage + 1} / ${currentManga.pages.length}</div>
+                <div class="nav-buttons">
+                    ${buttons}
+                </div>
+            `;
+        }
+        function nextPage() {
+            if (currentPage < currentManga.pages.length - 1) {
+                currentPage++;
+                showCurrentPage();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                showCurrentPage();
+            }
+        }
+
+        // 初期化
+        window.onload = function() {
+            renderYearList('2023');
+            renderYearList('2024');
+            renderYearList('2025');
+            renderYearList('2026');
+            
+            document.getElementById('year2023Content').classList.remove('active');
+            document.getElementById('year2024Content').classList.remove('active');
+            document.getElementById('year2025Content').classList.remove('active');
+            document.getElementById('year2026Content').classList.remove('active');
+            
+            document.getElementById('arrow2023').textContent = '▼';
+            document.getElementById('arrow2024').textContent = '▼';
+            document.getElementById('arrow2025').textContent = '▼';
+            document.getElementById('arrow2026').textContent = '▼';
+        };
+    </script>
