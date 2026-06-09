@@ -244,46 +244,78 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
             }
         }
+function showPasswordForNovel(index) {
 
-        function showPasswordForNovel(index) {
-            const novel = novels[index];
+    const novel = novels[index];
 
-            // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.password === null || novel.password === "") {
-                currentNovelIndex = index;
-                loadSelectedNovel();
-                return;
-            }
+    // パスワードなし作品
+    if (!novel.passwordHash) {
 
-            // それ以外の小説はパスワード入力
-            pendingNovelIndex = index;
-            document.getElementById('passwordTitle').innerHTML = 
-                `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
-            
-            document.getElementById('passwordScreen').style.display = 'flex';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('passwordError').textContent = '';
-        }
+        currentNovelIndex = index;
+        loadNovelWithoutPassword();
 
-
-       function checkPassword() {
-    const input = document.getElementById('passwordInput').value.trim();
-    if (!input) {
-        document.getElementById('passwordError').textContent = "パスワードを入力してください";
         return;
     }
 
-    // SHA-256ハッシュを計算
-    const hash = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
+    // パスワードあり作品
+    pendingNovelIndex = index;
 
-    // ハッシュで比較
-    currentManga = mangaList.find(m => m.passwordHash === hash);
+    document.getElementById('passwordTitle').innerHTML =
+        `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
 
-    if (currentManga) {
+    document.getElementById('passwordScreen').style.display = 'flex';
+
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordError').textContent = '';
+}
+async function loadNovelWithoutPassword() {
+
+    const novel = novels[currentNovelIndex];
+
+    const response = await fetch(novel.file);
+
+    const encrypted = await response.text();
+
+    const decrypted =
+        CryptoJS.AES.decrypt(
+            encrypted,
+            "パスワード"
+        ).toString(CryptoJS.enc.Utf8);
+
+    document.getElementById('currentTitle').innerHTML =
+        `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
+
+    document.getElementById('result').innerHTML =
+        decrypted.replace(/\n/g, '<br>');
+}
+      function checkPassword() {
+
+    const input =
+        document.getElementById('passwordInput').value.trim();
+
+    if (!input) {
+        document.getElementById('passwordError').textContent =
+            "パスワードを入力してください";
+        return;
+    }
+
+    const novel = novels[pendingNovelIndex];
+
+    const hash =
+        CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
+
+    if (hash === novel.passwordHash) {
+
+        currentNovelIndex = pendingNovelIndex;
+
         document.getElementById('passwordScreen').style.display = 'none';
-        loadManga();
+
+        loadSelectedNovel();
+
     } else {
-        document.getElementById('passwordError').textContent = "パスワードが違います";
+
+        document.getElementById('passwordError').textContent =
+            "パスワードが違います";
     }
 }
 
@@ -295,10 +327,13 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
 
     const encrypted = await response.text();
 
-   const decrypted =
+  const inputPassword =
+    document.getElementById('passwordInput').value;
+
+const decrypted =
     CryptoJS.AES.decrypt(
         encrypted,
-        "パスワード"
+        inputPassword
     ).toString(CryptoJS.enc.Utf8);
 
     document.getElementById('currentTitle').innerHTML =
