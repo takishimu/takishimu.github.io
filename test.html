@@ -295,11 +295,11 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
 
     const encrypted = await response.text();
 
-    const decrypted =
-        CryptoJS.AES.decrypt(
-            encrypted,
-            "暗号化したときのパスワード"
-        ).toString(CryptoJS.enc.Utf8);
+   const decrypted =
+    CryptoJS.AES.decrypt(
+        encrypted,
+        "パスワード"
+    ).toString(CryptoJS.enc.Utf8);
 
     document.getElementById('currentTitle').innerHTML =
         `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
