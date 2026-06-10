@@ -155,6 +155,8 @@
         </div>
     </div>
 
+<script>
+
    let novels = [
 
 {
@@ -1185,7 +1187,7 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             const novel = novels[index];
 
             // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.password === null || novel.password === "") {
+            if (novel.id === 1 || novel.passwordHash === null || novel.passwordHash === "") {
                 currentNovelIndex = index;
                 loadSelectedNovel();
                 return;
@@ -1212,11 +1214,11 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
     const hash = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
 
     // ハッシュで比較
-    currentManga = mangaList.find(m => m.passwordHash === hash);
+    currentNovelIndex = novels.find(m => m.passwordHash === hash);
 
-    if (currentManga) {
+    if (currentNovelIndex) {
         document.getElementById('passwordScreen').style.display = 'none';
-        loadManga();
+        loadSelectedNovel();
     } else {
         document.getElementById('passwordError').textContent = "パスワードが違います";
     }
