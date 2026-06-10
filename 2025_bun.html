@@ -127,7 +127,7 @@
         <div class="left-sidebar">
             <h2>📅 年別一覧</h2>
             
-            <div class="year-header" onclick="toggleYear('2025')">20255年 <span id="arrow2025">▼</span></div>
+            <div class="year-header" onclick="toggleYear('2025')">2025年 <span id="arrow2025">▼</span></div>
             <div class="year-content" id="year2025Content"></div>
 
         </div>
@@ -1414,10 +1414,12 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         }
 
         function showPasswordForNovel(index) {
-            const novel = novels[index];
+        
+           const novel = novels[index];
+            if (!novel) return;
 
-            // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.passwordHash === null || novel.passwordHash === "") {
+            // パスワードが null または空文字列の場合はパスワードなしで直接表示
+            if (novel.password === null || novel.password === "" || novel.password === undefined) {
                 currentNovelIndex = index;
                 loadSelectedNovel();
                 return;
