@@ -1321,34 +1321,21 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             }
         }
 
-        function showPasswordForNovel(index) {
+    function checkPassword() {
 
-    const novel = novels[index];
-    if (!novel) return;
+    const input =
+        document.getElementById('passwordInput')
+        .value
+        .trim();
 
-    // パスワードなし
-    if (
-        novel.passwordHash === null ||
-        novel.passwordHash === "" ||
-        novel.passwordHash === undefined
-    ) {
+    if (!input) {
 
-        currentNovelIndex = index;
-        loadSelectedNovel();
+        document.getElementById('passwordError')
+            .textContent =
+            "パスワードを入力してください";
+
         return;
     }
-
-    // パスワードあり
-    pendingNovelIndex = index;
-
-    document.getElementById('passwordTitle').innerHTML =
-        `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
-
-    document.getElementById('passwordScreen').style.display = 'flex';
-    document.getElementById('passwordInput').value = '';
-    document.getElementById('passwordError').textContent = '';
-}
-
 
     const hash =
         CryptoJS.SHA256(input)
@@ -1375,7 +1362,6 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             "パスワードが違います";
     }
 }
-
       async function loadSelectedNovel() {
 
     console.log("currentNovelIndex=", currentNovelIndex);
