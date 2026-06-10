@@ -1224,14 +1224,45 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
     }
 }
 
-        function loadSelectedNovel() {
-            const novel = novels[currentNovelIndex];
-            document.getElementById('currentTitle').innerHTML = 
-                `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
+       async function loadSelectedNovel() {
 
-            document.getElementById('result').innerHTML = novel.template.replace(/\n/g, '<br>');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    const novel = novels[currentNovelIndex];
+
+    document.getElementById('currentTitle').innerHTML =
+        `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
+
+    try {
+
+        const response =
+            await fetch(novel.file);
+
+        const encrypted =
+            await response.text();
+
+        const decrypted =
+            CryptoJS.AES.decrypt(
+                encrypted,
+                "Takishimu_Novel_Master_Key_2026"
+            ).toString(
+                CryptoJS.enc.Utf8
+            );
+
+        document.getElementById('result').innerHTML =
+            decrypted.replace(/\n/g, '<br>');
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+    } catch (error) {
+
+        console.log(novels);
+
+        document.getElementById('result').innerHTML =
+            "小説の読み込みに失敗しました";
+    }
+}
 
         // 初期化
         window.onload = function() {
