@@ -1341,7 +1341,7 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             document.getElementById('passwordError').textContent = '';
         }
 
-      function checkPassword() {
+     function checkPassword() {
 
     const input =
         document.getElementById('passwordInput')
@@ -1366,11 +1366,14 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
 
     if (hash === novel.passwordHash) {
 
-       const decrypted =
-    CryptoJS.AES.decrypt(
-        encrypted,
-        document.getElementById('passwordInput').value
-    ).toString(CryptoJS.enc.Utf8);
+        currentNovelIndex =
+            pendingNovelIndex;
+
+        document.getElementById('passwordScreen')
+            .style.display =
+            'none';
+
+        loadSelectedNovel();
 
     } else {
 
@@ -1404,13 +1407,11 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         const encrypted =
             await response.text();
 
-        const decrypted =
-            CryptoJS.AES.decrypt(
-                encrypted,
-                "Takishimu_Novel_Master_Key_2026"
-            ).toString(
-                CryptoJS.enc.Utf8
-            );
+      const decrypted =
+    CryptoJS.AES.decrypt(
+        encrypted,
+        "Takishimu_Novel_Master_Key_2026"
+    ).toString(CryptoJS.enc.Utf8);
 
         document.getElementById('result')
             .innerHTML =
