@@ -1202,30 +1202,55 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordError').textContent = '';
         }
+function checkPassword() {
 
-       function checkPassword() {
-    const input = document.getElementById('passwordInput').value.trim();
+    const input =
+        document.getElementById('passwordInput')
+        .value
+        .trim();
+
     if (!input) {
-        document.getElementById('passwordError').textContent = "パスワードを入力してください";
+
+        document.getElementById('passwordError')
+            .textContent =
+            "パスワードを入力してください";
+
         return;
     }
 
-    // SHA-256ハッシュを計算
-    const hash = CryptoJS.SHA256(input).toString(CryptoJS.enc.Hex);
+    const hash =
+        CryptoJS.SHA256(input)
+        .toString(CryptoJS.enc.Hex);
 
-    // ハッシュで比較
-    currentNovelIndex = novels.find(m => m.passwordHash === hash);
+    const novel =
+        novels[pendingNovelIndex];
 
-    if (currentNovelIndex) {
-        document.getElementById('passwordScreen').style.display = 'none';
+    if (hash === novel.passwordHash) {
+
+        currentNovelIndex =
+            pendingNovelIndex;
+
+        document.getElementById('passwordScreen')
+            .style.display =
+            'none';
+
         loadSelectedNovel();
+
     } else {
-        document.getElementById('passwordError').textContent = "パスワードが違います";
+
+        document.getElementById('passwordError')
+            .textContent =
+            "パスワードが違います";
     }
 }
 
        async function loadSelectedNovel() {
+   console.log("currentNovelIndex=", currentNovelIndex);
+    console.log("novels=", novels);
 
+    const novel = novels[currentNovelIndex];
+
+    console.log("novel=", novel);
     const novel = novels[currentNovelIndex];
 
     document.getElementById('currentTitle').innerHTML =
