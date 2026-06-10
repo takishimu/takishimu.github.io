@@ -1323,13 +1323,11 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         function showPasswordForNovel(index) {
             const novel = novels[index];
 
-            // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.passwordHash === null) {
-                currentNovelIndex = index;
-                loadSelectedNovel();
-                return;
-            }
-
+           if (novel.passwordHash === null) {
+    currentNovelIndex = index;
+    loadSelectedNovel();
+    return;
+}
             // それ以外の小説はパスワード入力
             pendingNovelIndex = index;
             document.getElementById('passwordTitle').innerHTML = 
@@ -1365,14 +1363,11 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
 
     if (hash === novel.passwordHash) {
 
-        currentNovelIndex =
-            pendingNovelIndex;
-
-        document.getElementById('passwordScreen')
-            .style.display =
-            'none';
-
-        loadSelectedNovel();
+       const decrypted =
+    CryptoJS.AES.decrypt(
+        encrypted,
+        document.getElementById('passwordInput').value
+    ).toString(CryptoJS.enc.Utf8);
 
     } else {
 
