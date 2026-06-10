@@ -1246,7 +1246,7 @@
 
 ];
 
-        let currentNovelIndex = 0;
+      let currentNovelIndex = 0;
         let pendingNovelIndex = null;
 
         const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
@@ -1320,22 +1320,41 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
             }
         }
+        
+        function showPasswordForNovel(index) {
 
-    function checkPassword() {
+    const novel = novels[index];
+    if (!novel) return;
+
+    if (
+        novel.passwordHash === null ||
+        novel.passwordHash === "" ||
+        novel.passwordHash === undefined
+    ) {
+
+        currentNovelIndex = index;
+        loadSelectedNovel();
+        return;
+    }
+
+    pendingNovelIndex = index;
+
+    document.getElementById('passwordTitle').innerHTML =
+        `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
+
+    document.getElementById('passwordScreen').style.display = 'flex';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordError').textContent = '';
+}
+
+function checkPassword() {
 
     const input =
         document.getElementById('passwordInput')
         .value
         .trim();
 
-    if (!input) {
-
-        document.getElementById('passwordError')
-            .textContent =
-            "パスワードを入力してください";
-
-        return;
-    }
+    if (!input) return;
 
     const hash =
         CryptoJS.SHA256(input)
@@ -1350,8 +1369,7 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
             pendingNovelIndex;
 
         document.getElementById('passwordScreen')
-            .style.display =
-            'none';
+            .style.display = 'none';
 
         loadSelectedNovel();
 
@@ -1359,10 +1377,11 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
 
         document.getElementById('passwordError')
             .textContent =
-            "パスワードが違います";
+            'パスワードが違います';
     }
 }
-      async function loadSelectedNovel() {
+
+async function loadSelectedNovel() {
 
     console.log("currentNovelIndex=", currentNovelIndex);
     console.log("novels=", novels);
@@ -1393,19 +1412,15 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         document.getElementById('result').innerHTML =
             decrypted.replace(/\n/g, '<br>');
 
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-
     } catch (error) {
 
-        console.log(novels);
+        console.log(error);
 
         document.getElementById('result').innerHTML =
             "小説の読み込みに失敗しました";
     }
 }
+
         // 初期化
         window.onload = function() {
             ['2024'].forEach(year => renderYearList(year));
