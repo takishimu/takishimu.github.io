@@ -1414,41 +1414,33 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
         }
 
         function showPasswordForNovel(index) {
-        
-           const novel = novels[index];
-            if (!novel) return;
 
-            // パスワードが null または空文字列の場合はパスワードなしで直接表示
-            if (novel.password === null || novel.password === "" || novel.password === undefined) {
-                currentNovelIndex = index;
-                loadSelectedNovel();
-                return;
-            }
+    const novel = novels[index];
+    if (!novel) return;
 
-            // それ以外の小説はパスワード入力
-            pendingNovelIndex = index;
-            document.getElementById('passwordTitle').innerHTML = 
-                `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
-            
-            document.getElementById('passwordScreen').style.display = 'flex';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('passwordError').textContent = '';
-        }
-function checkPassword() {
+    // パスワードなし
+    if (
+        novel.passwordHash === null ||
+        novel.passwordHash === "" ||
+        novel.passwordHash === undefined
+    ) {
 
-    const input =
-        document.getElementById('passwordInput')
-        .value
-        .trim();
-
-    if (!input) {
-
-        document.getElementById('passwordError')
-            .textContent =
-            "パスワードを入力してください";
-
+        currentNovelIndex = index;
+        loadSelectedNovel();
         return;
     }
+
+    // パスワードあり
+    pendingNovelIndex = index;
+
+    document.getElementById('passwordTitle').innerHTML =
+        `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
+
+    document.getElementById('passwordScreen').style.display = 'flex';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordError').textContent = '';
+}
+
 
     const hash =
         CryptoJS.SHA256(input)
