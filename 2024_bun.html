@@ -1381,7 +1381,7 @@ function checkPassword() {
     }
 }
 
-async function loadSelectedNovel() {
+ async function loadSelectedNovel() {
 
     console.log("currentNovelIndex=", currentNovelIndex);
     console.log("novels=", novels);
@@ -1412,13 +1412,20 @@ async function loadSelectedNovel() {
         document.getElementById('result').innerHTML =
             decrypted.replace(/\n/g, '<br>');
 
-    } catch (error) {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
 
-        console.log(error);
+    } 
+    
+    
+  catch (error) {
 
-        document.getElementById('result').innerHTML =
-            "小説の読み込みに失敗しました";
-    }
+    console.log(error);
+
+    document.getElementById('result').innerHTML =
+        "小説の読み込みに失敗しました";
 }
 
         // 初期化
