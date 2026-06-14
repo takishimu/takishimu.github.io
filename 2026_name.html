@@ -811,7 +811,7 @@
         const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
 
         function renderYearList(year) {
-            const container = document.getElementById('year' + year + 'Content');
+           const container = document.getElementById('year_' + year);
             container.innerHTML = '';
 
             for (let m = 1; m <= 12; m++) {
@@ -863,8 +863,11 @@
         }
 
         function toggleYear(year) {
-            const content = document.getElementById('year' + year + 'Content');
-            const arrow = document.getElementById('arrow' + year);
+            const content =
+    document.getElementById('year_' + year);
+
+const arrow =
+    document.getElementById('arrow_' + year);
             if (content) {
                 content.classList.toggle('active');
                 arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
@@ -967,8 +970,11 @@
         window.onload = function() {
             ['2026'].forEach(year => renderYearList(year));
             
-            document.getElementById('year2026Content').classList.remove('active');
-            document.getElementById('arrow2026').textContent = '▼';
+            document.getElementById('year_2026')
+    .classList.remove('active');
+
+document.getElementById('arrow_2026')
+    .textContent = '▼';
         };
     </script>
 </body>
