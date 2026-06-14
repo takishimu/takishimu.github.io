@@ -1338,7 +1338,7 @@ Gスポットと陰核脚を責められて潮噴きアクメをさせられた�
 
 ];
 
-        let currentNovelIndex = 0;
+     let currentNovelIndex = 0;
         let pendingNovelIndex = null;
 
         const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
@@ -1412,26 +1412,33 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
             }
         }
-
+        
         function showPasswordForNovel(index) {
-            const novel = novels[index];
 
-            // id:1 はパスワードなしで即表示
-            if (novel.id === 1 || novel.passwordHash === null || novel.passwordHash === "") {
-                currentNovelIndex = index;
-                loadSelectedNovel();
-                return;
-            }
+    const novel = novels[index];
+    if (!novel) return;
 
-            // それ以外の小説はパスワード入力
-            pendingNovelIndex = index;
-            document.getElementById('passwordTitle').innerHTML = 
-                `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
-            
-            document.getElementById('passwordScreen').style.display = 'flex';
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('passwordError').textContent = '';
-        }
+    if (
+        novel.passwordHash === null ||
+        novel.passwordHash === "" ||
+        novel.passwordHash === undefined
+    ) {
+
+        currentNovelIndex = index;
+        loadSelectedNovel();
+        return;
+    }
+
+    pendingNovelIndex = index;
+
+    document.getElementById('passwordTitle').innerHTML =
+        `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
+
+    document.getElementById('passwordScreen').style.display = 'flex';
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordError').textContent = '';
+}
+
 function checkPassword() {
 
     const input =
@@ -1439,14 +1446,7 @@ function checkPassword() {
         .value
         .trim();
 
-    if (!input) {
-
-        document.getElementById('passwordError')
-            .textContent =
-            "パスワードを入力してください";
-
-        return;
-    }
+    if (!input) return;
 
     const hash =
         CryptoJS.SHA256(input)
@@ -1461,8 +1461,7 @@ function checkPassword() {
             pendingNovelIndex;
 
         document.getElementById('passwordScreen')
-            .style.display =
-            'none';
+            .style.display = 'none';
 
         loadSelectedNovel();
 
@@ -1470,11 +1469,11 @@ function checkPassword() {
 
         document.getElementById('passwordError')
             .textContent =
-            "パスワードが違います";
+            'パスワードが違います';
     }
 }
 
-      async function loadSelectedNovel() {
+ async function loadSelectedNovel() {
 
     console.log("currentNovelIndex=", currentNovelIndex);
     console.log("novels=", novels);
@@ -1482,6 +1481,7 @@ function checkPassword() {
     const novel = novels[currentNovelIndex];
 
     console.log("novel=", novel);
+    
 
     document.getElementById('currentTitle').innerHTML =
         `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
@@ -1520,7 +1520,7 @@ function checkPassword() {
     document.getElementById('result').innerHTML =
         "小説の読み込みに失敗しました";
 }
-
+}
         // 初期化
         window.onload = function() {
             ['2025'].forEach(year => renderYearList(year));
