@@ -675,7 +675,7 @@
 ・乳首を引き伸ばしながらの子宮ご奉仕調教♡大量ザーメン射精されて、幸せすぎて蕩け顔の完全メス堕ち♡♡
 `,
                 passwordHash: "42649676a104a2255b721ee293b88f5bd025f6e83b5d5682e0125786ddb4957d"                            // ← パスワードなしにしたい場合は null と書く
-            }
+            },
 
 ];
    let currentNovelIndex = 0;
@@ -821,6 +821,7 @@ function checkPassword() {
     const novel = novels[currentNovelIndex];
 
     console.log("novel=", novel);
+    
 
     document.getElementById('currentTitle').innerHTML =
         `小説本文 <small style="font-size:14px;color:#666;">（${novel.title}）</small>`;
@@ -859,7 +860,7 @@ function checkPassword() {
     document.getElementById('result').innerHTML =
         "小説の読み込みに失敗しました";
 }
- 
+}
         // 初期化
         window.onload = function() {
             ['2026'].forEach(year => renderYearList(year));
