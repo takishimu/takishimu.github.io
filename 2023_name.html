@@ -56,68 +56,12 @@
         }
         .year-header:hover, .month-header:hover { background: #f0d0f0; }
 
-        .year-content, .month-content {<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>名前変換 - 夢小説名前変換サイト</title>
-    <style>
-        body {
-            font-family: "メイリオ", sans-serif;
-            background: #f8f0f8;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .left-sidebar {
-            flex: 1;
-            min-width: 380px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .preview-area {
-            flex: 2;
-            min-width: 400px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+      .year-content, .month-content {
+    display: none;
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
 
-        h1 { text-align: center; color: #8b008b; margin-bottom: 10px; }
-        h2 { color: #8b008b; margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
-
-        .year-header, .month-header {
-            font-size: 18px;
-            font-weight: bold;
-            color: #8b008b;
-            padding: 12px 15px;
-            background: #f9e8f9;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .year-header:hover, .month-header:hover { background: #f0d0f0; }
-
-        .year-content, .month-content {
-            display: none;
-            padding-left: 15px;
-            margin-bottom: 15px;
-        }
         .year-content.active, .month-content.active {
             display: block;
         }
