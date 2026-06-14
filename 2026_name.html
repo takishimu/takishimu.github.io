@@ -978,14 +978,12 @@ const arrow =
             .replace(/《name6》/g, document.getElementById('name6').value || '【二人目の男主人公・苗字】');
 
         document.getElementById('result').innerHTML =
-            result.replace(/\n/g, '<br>');
+    result.replace(/\n/g, '<br>');
 
-
-      // ページ上部へ移動
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+document.getElementById('currentTitle').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+});
         
        
     } catch (error) {
