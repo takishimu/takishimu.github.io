@@ -980,6 +980,14 @@ const arrow =
         document.getElementById('result').innerHTML =
             result.replace(/\n/g, '<br>');
 
+
+      // ページ上部へ移動
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+        
+       
     } catch (error) {
 
         console.log(error);
