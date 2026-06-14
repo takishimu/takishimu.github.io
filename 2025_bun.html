@@ -1412,33 +1412,26 @@ synopsis.innerHTML = (novel.synopsis || 'あらすじは準備中です。').rep
                 arrow.textContent = content.classList.contains('active') ? '▲' : '▼';
             }
         }
-        
+
         function showPasswordForNovel(index) {
+            const novel = novels[index];
 
-    const novel = novels[index];
-    if (!novel) return;
+            // id:1 はパスワードなしで即表示
+            if (novel.id === 1 || novel.passwordHash === null || novel.passwordHash === "") {
+                currentNovelIndex = index;
+                loadSelectedNovel();
+                return;
+            }
 
-    if (
-        novel.passwordHash === null ||
-        novel.passwordHash === "" ||
-        novel.passwordHash === undefined
-    ) {
-
-        currentNovelIndex = index;
-        loadSelectedNovel();
-        return;
-    }
-
-    pendingNovelIndex = index;
-
-    document.getElementById('passwordTitle').innerHTML =
-        `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
-
-    document.getElementById('passwordScreen').style.display = 'flex';
-    document.getElementById('passwordInput').value = '';
-    document.getElementById('passwordError').textContent = '';
-}
-
+            // それ以外の小説はパスワード入力
+            pendingNovelIndex = index;
+            document.getElementById('passwordTitle').innerHTML = 
+                `${novel.title}<br>を表示するには<br>パスワードを入力してください`;
+            
+            document.getElementById('passwordScreen').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').textContent = '';
+        }
 function checkPassword() {
 
     const input =
@@ -1446,7 +1439,14 @@ function checkPassword() {
         .value
         .trim();
 
-    if (!input) return;
+    if (!input) {
+
+        document.getElementById('passwordError')
+            .textContent =
+            "パスワードを入力してください";
+
+        return;
+    }
 
     const hash =
         CryptoJS.SHA256(input)
@@ -1461,7 +1461,8 @@ function checkPassword() {
             pendingNovelIndex;
 
         document.getElementById('passwordScreen')
-            .style.display = 'none';
+            .style.display =
+            'none';
 
         loadSelectedNovel();
 
@@ -1469,11 +1470,11 @@ function checkPassword() {
 
         document.getElementById('passwordError')
             .textContent =
-            'パスワードが違います';
+            "パスワードが違います";
     }
 }
 
-async function loadSelectedNovel() {
+      async function loadSelectedNovel() {
 
     console.log("currentNovelIndex=", currentNovelIndex);
     console.log("novels=", novels);
@@ -1504,16 +1505,22 @@ async function loadSelectedNovel() {
         document.getElementById('result').innerHTML =
             decrypted.replace(/\n/g, '<br>');
 
-    } catch (error) {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
 
-        console.log(error);
+    } 
+    
+    
+  catch (error) {
 
-        document.getElementById('result').innerHTML =
-            "小説の読み込みに失敗しました";
-    }
+    console.log(error);
+
+    document.getElementById('result').innerHTML =
+        "小説の読み込みに失敗しました";
 }
 
- 
         // 初期化
         window.onload = function() {
             ['2025'].forEach(year => renderYearList(year));
