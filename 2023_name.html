@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
     <title>名前変換 - 夢小説名前変換サイト</title>
     <style>
         body {
@@ -55,11 +56,12 @@
         }
         .year-header:hover, .month-header:hover { background: #f0d0f0; }
 
-        .year-content, .month-content {
-            display: none;
-            padding-left: 15px;
-            margin-bottom: 15px;
-        }
+      .year-content, .month-content {
+    display: none;
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
         .year-content.active, .month-content.active {
             display: block;
         }
@@ -134,7 +136,7 @@
     </style>
 </head>
 <body>
-    <h1>名前変換小説</h1>
+    <h1>名前変換</h1>
     <p style="text-align:center;">小説のタイトルをクリックして名前を変換できます</p>
 
     <div class="container">
@@ -1141,7 +1143,7 @@
 
 ];
 
-       let currentNovelIndex = undefined;
+    let currentNovelIndex = undefined;
         let pendingNovelIndex = null;
 
         const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
@@ -1308,13 +1310,12 @@ function checkPassword() {
         document.getElementById('result').innerHTML =
             result.replace(/\n/g, '<br>');
 
-
       // ページ上部へ移動
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
-        
+
     } catch (error) {
 
         console.log(error);
